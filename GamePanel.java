@@ -66,6 +66,7 @@ public class GamePanel {
                     grid[y][x] = selected;
                     changerTour();
                 } else if (cible.getPlayerId() != currentPlayer) {
+                    System.out.println(selected.attack(cible));
                     if (cible.getHealth() <= 0) {
                         grid[y][x] = null;
                         if (cible.getKeyName().equalsIgnoreCase("150")) {
