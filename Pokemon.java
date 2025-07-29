@@ -11,6 +11,7 @@ public class Pokemon {
     private int playerId;
     private Texture image;
     private int gridX, gridY;
+    private int type1, type2;
 
     // Static maps to replace switches
     private static final Map<String, Integer> healthMap = new HashMap<>();
@@ -77,6 +78,30 @@ public class Pokemon {
         statsMap.put("36", new int[]{70, 73, 60});
         statsMap.put("40", new int[]{70, 45, 45});
         statsMap.put("44", new int[]{65, 70, 40});
+
+        // Type1 assignments
+        type1Map.put("150", Type.PSY);
+        type1Map.put("4", Type.FEU); type1Map.put("5", Type.FEU); type1Map.put("6", Type.FEU); type1Map.put("146", Type.FEU);
+        type1Map.put("7", Type.EAU); type1Map.put("8", Type.EAU); type1Map.put("9", Type.EAU);
+        type1Map.put("1", Type.PLANTE); type1Map.put("2", Type.PLANTE); type1Map.put("3", Type.PLANTE); type1Map.put("102", Type.PLANTE); type1Map.put("44", Type.PLANTE);
+        type1Map.put("144", Type.GLACE); type1Map.put("145", Type.ELECTRIK); type1Map.put("25", Type.ELECTRIK);
+        type1Map.put("149", Type.DRAGON);
+        type1Map.put("10", Type.INSECTE);
+        type1Map.put("12", Type.PLANTE); type1Map.put("46", Type.PLANTE); type1Map.put("69", Type.PLANTE);
+        type1Map.put("18", Type.NORMAL); type1Map.put("17", Type.NORMAL); type1Map.put("21", Type.NORMAL); type1Map.put("35", Type.NORMAL);
+        type1Map.put("36", Type.NORMAL); type1Map.put("40", Type.NORMAL); type1Map.put("83", Type.NORMAL); type1Map.put("108", Type.NORMAL); type1Map.put("115", Type.NORMAL);
+        type1Map.put("23", Type.POISON); type1Map.put("27", Type.POISON); type1Map.put("31", Type.POISON); type1Map.put("42", Type.POISON); type1Map.put("88", Type.POISON); type1Map.put("29", Type.POISON);
+        type1Map.put("59", Type.FEU); type1Map.put("78", Type.FEU);
+        type1Map.put("63", Type.PSY); type1Map.put("80", Type.PSY);
+        type1Map.put("74", Type.ROCHE); type1Map.put("76", Type.ROCHE); type1Map.put("95", Type.ROCHE);
+
+        // Type2 assignments
+        type2Map.put("150", Type.SANS);
+        type2Map.put("6", Type.VOL); type2Map.put("146", Type.VOL); type2Map.put("144", Type.VOL); type2Map.put("145", Type.VOL); type2Map.put("149", Type.VOL);
+        type2Map.put("3", Type.POISON); type2Map.put("2", Type.POISON); type2Map.put("1", Type.POISON); type2Map.put("102", Type.PSY); type2Map.put("44", Type.POISON);
+        type2Map.put("12", Type.VOL); type2Map.put("46", Type.VOL);
+        type2Map.put("18", Type.VOL); type2Map.put("17", Type.VOL); type2Map.put("21", Type.VOL); type2Map.put("42", Type.VOL); type2Map.put("83", Type.VOL);
+        type2Map.put("27", Type.SOL); type2Map.put("51", Type.SOL); type2Map.put("74", Type.SOL); type2Map.put("76", Type.SOL); type2Map.put("95", Type.SOL);
     }
 
     public Pokemon(String name, int playerId, int gridX, int gridY) {
@@ -93,6 +118,9 @@ public class Pokemon {
             this.defense = statArray[1];
             this.speed = statArray[2];
         }
+
+        this.type1 = type1Map.getOrDefault(keyName, Type.SANS);
+        this.type2 = type2Map.getOrDefault(keyName, Type.SANS);
 
         loadImage();
     }
@@ -150,8 +178,11 @@ public class Pokemon {
     }
 
     private int calculateDamage(Pokemon attacker, Pokemon defender) {
+        double eff1 = Type.getEffectiveness(attacker.getType1(), defender.getType1());
+        double eff2 = Type.getEffectiveness(attacker.getType2(), defender.getType2());
+        double totalEff = eff1 + eff2;
         int base = Math.max(attacker.getAttack() - defender.getDefense(), 1);
-        return (int) (base);
+        return (int) (base * totalEff);
     }
 
     // Getters and setters
@@ -168,4 +199,6 @@ public class Pokemon {
     public int getPlayerId() { return playerId; }
     public int getGridX() { return gridX; }
     public int getGridY() { return gridY; }
+    public int getType1() { return type1; }
+    public int getType2() { return type2; }
 }
